@@ -14,6 +14,7 @@ app.get("/posts", (_, res) => {
 
 app.post("/posts", (req, res) => {
   console.log("Create a post");
+
   let id;
   do {
     id = randomBytes(4).toString("hex");
