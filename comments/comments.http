@@ -1,0 +1,10 @@
+## Create a comment for a post
+POST http://localhost:4001/posts/1/comments
+Content-Type: application/json
+
+{
+  "content": "This is a comment"
+}
+
+### Get all comments for a post
+GET http://localhost:4001/posts/1/comments
