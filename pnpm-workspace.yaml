@@ -1,0 +1,7 @@
+packages:
+  - 'client'
+  - 'comments'
+  - 'event-bus'
+  - 'moderation'
+  - 'posts'
+  - 'query'

@@ -1,0 +1,7 @@
+{
+  "name": "blog-workspace",
+  "private": true,
+  "scripts": {
+    "preinstall": "node scripts/check-pnpm.js"
+  }
+}

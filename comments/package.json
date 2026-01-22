@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "preinstall": "node ../scripts/check-pnpm.js",
     "start": "nodemon index.js"
   },
   "author": "",
