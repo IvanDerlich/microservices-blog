@@ -15,25 +15,19 @@ app.get("/posts/:id/comments", (req, res) => {
 
 app.post("/posts/:id/comments", (req, res) => {
   console.log("Create a comment for a post");
-  let commentId;
+
   const postId = req.params.id;
+
   if (!postId) {
     throw new Error("Post ID is required");
   }
+  const comments = (commentsByPostId[postId] ||= []);
 
-  if (!commentsByPostId[postId]) {
-    commentsByPostId[postId] = [];
-  }
-
-  do {
-    commentId = randomBytes(4).toString("hex");
-  } while (commentsByPostId[postId][commentId]);
+  const commentId = randomBytes(4).toString("hex");
   const { content } = req.body;
-
-  const comments = commentsByPostId[postId] || [];
-  comments.push({ id: commentId, content });
-  commentsByPostId[postId] = comments;
-  res.status(201).send(commentsByPostId[postId][commentId]);
+  const comment = { id: commentId, content };
+  comments.push(comment);
+  res.status(201).send(comment);
 });
 
 app.listen(port, () => {
