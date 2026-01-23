@@ -1,12 +1,19 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const { randomBytes } = require("crypto");
+const cors = require("cors");
 const app = express();
 app.use(bodyParser.json());
 
 const port = 4001;
 
 const commentsByPostId = {};
+
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+  }),
+);
 
 app.get("/posts/:id/comments", (req, res) => {
   console.log("Get all comments for a post");
