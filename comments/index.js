@@ -48,6 +48,12 @@ app.post("/posts/:id/comments", (req, res) => {
   res.status(201).send(comment);
 });
 
+app.post("/events", (req, res) => {
+  console.log("Received Event:", req.body.type);
+
+  res.send({});
+});
+
 app.listen(port, () => {
   console.log(`Comments service listening on port ${port}`);
 });
