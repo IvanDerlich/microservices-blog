@@ -3,6 +3,6 @@
   "private": true,
   "scripts": {
     "preinstall": "node scripts/check-pnpm.js",
-    "start": "pnpm -r --parallel --filter posts --filter comments --filter event-bus --filter client start --stream"
+    "start": "pnpm -r --parallel --filter posts --filter comments --filter query --filter event-bus --filter client start --stream"
   }
 }
