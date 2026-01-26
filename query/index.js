@@ -12,8 +12,8 @@ app.use(
   }),
 );
 
-app.get("/events", (req, res) => {
-  res.send("Event Bus is running");
+app.get("/posts", (req, res) => {
+  res.send(posts);
 });
 
 app.post("/events", async (req, res) => {
