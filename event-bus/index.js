@@ -11,24 +11,20 @@ app.post("/events", async (req, res) => {
   const event = req.body;
 
   events.push(event);
-  // axios.post('http://localhost:4000/events', event).catch((err) => {
-  //   console.error('Error sending event to service 4000:', err.message);
-  // });
-  // axios.post('http://localhost:4001/events', event).catch((err) => {
-  //   console.error('Error sending event to service 4001:', err.message);
-  // });
-  // axios.post('http://localhost:4002/events', event).catch((err) => {
-  //   console.error('Error sending event to service 4002:', err.message);
-  // });
-  await Promise.all([
-    axios.post("http://localhost:4000/events", event),
-    axios.post("http://localhost:4001/events", event),
-    axios.post("http://localhost:4002/events", event),
-  ]).catch((err) => {
-    // console.error("Error sending event to one of the services:", err.message);
-    res.status(500);
-    throw err;
-  });
+
+  const services = [
+    "http://localhost:4000/events",
+    "http://localhost:4001/events",
+    "http://localhost:4002/events",
+  ];
+
+  await Promise.all(
+    services.map((service) =>
+      axios.post(service, event).catch((err) => {
+        console.warn("Service not available:", service, err.message);
+      }),
+    ),
+  );
 
   res.send({ status: "OK" });
 });

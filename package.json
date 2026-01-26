@@ -2,6 +2,7 @@
   "name": "blog-workspace",
   "private": true,
   "scripts": {
-    "preinstall": "node scripts/check-pnpm.js"
+    "preinstall": "node scripts/check-pnpm.js",
+    "start": "pnpm -r --parallel --filter posts --filter comments --filter event-bus --filter client start --stream"
   }
 }
