@@ -9,6 +9,7 @@ const events = [];
 
 app.post("/events", async (req, res) => {
   const event = req.body;
+  console.log("Received Event:", event);
 
   events.push(event);
 
