@@ -32,15 +32,23 @@ app.post("/posts/:id/comments", (req, res) => {
   const comments = (commentsByPostId[postId] ||= []);
 
   const commentId = randomBytes(4).toString("hex");
-  const { content } = req.body;
-  const comment = { id: commentId, content };
+  const { content: receivedContent } = req.body;
+  const comment = {
+    id: commentId,
+    content: receivedContent,
+    status: "pending",
+  };
   comments.push(comment);
+
+  // Destructute the comment to prepare data to send
+  const { id, content, status } = comment;
 
   axios.post("http://localhost:4005/events", {
     type: "CommentCreated",
     data: {
-      id: commentId,
+      id,
       content,
+      status,
       postId,
     },
   });
@@ -50,6 +58,44 @@ app.post("/posts/:id/comments", (req, res) => {
 
 app.post("/events", (req, res) => {
   console.log("Received Event:", req.body.type);
+
+  switch (req.body.type) {
+    case "CommentModerated": {
+      const { id, postId, status } = req.body.data;
+
+      if (!id || !postId || !status) {
+        throw new Error(
+          "id, postId, and status are required in CommentModerated event data",
+        );
+      }
+
+      const post = commentsByPostId[postId];
+      if (!post) {
+        throw new Error("Post not found for CommentModerated event: " + postId);
+      }
+      const comment = post.find((comment) => comment.id === id);
+      if (!comment) {
+        throw new Error("Comment not found for CommentModerated event: " + id);
+      }
+
+      comment.status = status;
+
+      console.log("Updating moderated comment to:", comment);
+
+      axios.post("http://localhost:4005/events", {
+        type: "CommentUpdated",
+        data: {
+          id,
+          postId,
+          status,
+          content: comment.content,
+        },
+      });
+      break;
+    }
+    default:
+      break;
+  }
 
   res.send({});
 });

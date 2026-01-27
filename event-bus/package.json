@@ -2,8 +2,8 @@
   "name": "event-bus",
   "version": "1.0.0",
   "description": "",
-  "type": "module",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "preinstall": "node ../scripts/check-pnpm.js",
     "start": "nodemon index.js"

@@ -26,25 +26,53 @@ app.post("/events", async (req, res) => {
       break;
     }
     case "CommentCreated": {
-      const { id, content, postId } = event.data;
+      const { id, postId } = event.data;
       const post = posts[postId];
-      if (post) {
-        console.log("Adding comment to post:", postId);
-        post.comments.push({ id, content });
-      } else {
-        console.error("Post not found for CommentCreated event:", postId);
+      if (!post) {
+        const message = "Post not found for CommentCreated event: " + postId;
+        console.error(message);
         res.status(400).send({
-          error: "Post not found for CommentCreated event: " + postId,
+          error: message,
         });
         return;
       }
+      post.comments.push({
+        id,
+        content: "Comment pending moderation",
+        status: "pending",
+      });
+      break;
+    }
+    case "CommentUpdated": {
+      const { id, postId, status, content } = event.data;
+      const post = posts[postId];
+
+      if (!post) {
+        const message = "Post not found for CommentUpdated event: " + postId;
+        console.error(message);
+        res.status(400).send({
+          error: message,
+        });
+        return;
+      }
+      const comment = post.comments.find((comment) => comment.id === id);
+      if (!comment) {
+        const message = "Comment not found for CommentUpdated event: " + id;
+        console.error(message);
+        res.status(400).send({
+          error: message,
+        });
+        return;
+      }
+      comment.status = status;
+      comment.content =
+        status === "approved" ? content : "This comment was rejected";
+      console.log("Updated comment:", comment);
       break;
     }
     default:
-      res.status(400).send({ error: "Unknown event type: " + event.type });
-      return;
+      break;
   }
-  console.log("Updated Posts:", posts);
 
   res.send({ status: "OK" });
 });
