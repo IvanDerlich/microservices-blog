@@ -39,7 +39,6 @@ app.post("/events", async (req, res) => {
       post.comments.push({
         id,
         content: "Comment pending moderation",
-        status: "pending",
       });
       break;
     }
@@ -64,9 +63,18 @@ app.post("/events", async (req, res) => {
         });
         return;
       }
-      comment.status = status;
-      comment.content =
-        status === "approved" ? content : "This comment was rejected";
+      switch (status) {
+        case "approved":
+          comment.content = content;
+          break;
+        case "rejected":
+          comment.content = "Comment rejected";
+          break;
+        case "pending":
+          throw new Error("Pending status should not update comment content");
+        default:
+          throw new Error("Unknown status: " + status);
+      }
       console.log("Updated comment:", comment);
       break;
     }
