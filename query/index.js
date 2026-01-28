@@ -4,29 +4,15 @@ const cors = require("cors");
 
 const posts = {};
 
-const app = express();
-app.use(bodyParser.json());
-app.use(
-  cors({
-    origin: "http://localhost:3000",
-  }),
-);
-
-app.get("/posts", (req, res) => {
-  res.send(posts);
-});
-
-app.post("/events", async (req, res) => {
-  const event = req.body;
-  console.log("Received Event:", event);
-  switch (event.type) {
+const handleEvent = (type, data) => {
+  switch (type) {
     case "PostCreated": {
-      const { id, title } = event.data;
+      const { id, title } = data;
       posts[id] = { id, title, comments: [] };
       break;
     }
     case "CommentCreated": {
-      const { id, postId } = event.data;
+      const { id, postId } = data;
       const post = posts[postId];
       if (!post) {
         const message = "Post not found for CommentCreated event: " + postId;
@@ -81,7 +67,25 @@ app.post("/events", async (req, res) => {
     default:
       break;
   }
+};
 
+const app = express();
+app.use(bodyParser.json());
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+  }),
+);
+
+app.get("/posts", (req, res) => {
+  res.send(posts);
+});
+
+app.post("/events", async (req, res) => {
+  const { type, data } = req.body;
+  console.log("Received Event Type:", type);
+  console.log("Received Event Data:", data);
+  handleEvent(type, data);
   res.send({ status: "OK" });
 });
 
